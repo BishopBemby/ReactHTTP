@@ -8,6 +8,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+
+  //as funtions are o=js objescts so adding them as depnedency in useEffect will create an infinte loop as technically, this obj iwll re render automatically when it will chnage to itself. solution one: omit dependency from useEffect, solution2: use useCallback()
   const fetchMoviesHandler = useCallback(async ()=>{
     setIsLoading(true);
     setError(null);
