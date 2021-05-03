@@ -6,12 +6,10 @@ import './App.css';
 function App() {
   const [movies, setFetchMovies] = useState([]);
 
- const fetchMoviesHandler = () =>{
-   fetch('https://swapi.dev/api/films/').then((data)=>{
-     return data.json();
-   }).then((response)=>{
-     console.log(response);
-     const transformedRes = response.results.map(res=>{
+  async function fetchMoviesHandler() {
+   const data = await fetch('https://swapi.dev/api/films/');
+   const response = await data.json();
+   const transformedRes = response.results.map(res=>{
        return {
          id: res.episode_id,
          title: res.title,
@@ -20,7 +18,6 @@ function App() {
        }
      })
      setFetchMovies(transformedRes);
-   })
  }
 
   return (
