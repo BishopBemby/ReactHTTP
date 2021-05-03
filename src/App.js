@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useCallback} from 'react';
 
 import MoviesList from './components/MoviesList';
+
+import AddMovie from './components/AddMovie';
 import './App.css';
 
 function App() {
@@ -14,22 +16,35 @@ function App() {
     setIsLoading(true);
     setError(null);
     try{
-      const data = await fetch('https://swapi.dev/api/films/');
+      const data = await fetch('https://reacthttp-f4741-default-rtdb.firebaseio.com/movies.json');
 
       //can do with data.status for handling different status codes.
       if(!data.ok){
         throw new Error('Something went wrong');
       }
       const response = await data.json();
-      const transformedRes = response.results.map(res=>{
-          return {
-            id: res.episode_id,
-            title: res.title,
-            openingText: res.opening_crawl,
-            releaseDate: res.release_date
+
+      const loadedMovies = [];
+
+      for(const key in response){
+        loadedMovies.push(
+          {
+            id: key,
+            title: response[key].title,
+            openingText: response[key].openingText,
+            releaseDate: response[key].releaseDate
           }
-        })
-        setFetchMovies(transformedRes);
+        )
+      }
+      // const transformedRes = response.map(res=>{
+      //     return {
+      //       id: res.episode_id,
+      //       title: res.title,
+      //       openingText: res.opening_crawl,
+      //       releaseDate: res.release_date
+      //     }
+      //   })
+        setFetchMovies(loadedMovies);
     }
     catch(error){
         setError(error.message);
@@ -42,6 +57,20 @@ function App() {
   fetchMoviesHandler();
 },[fetchMoviesHandler]);
 
+async function addMovieHandler(movie) {
+  const response = await fetch('https://reacthttp-f4741-default-rtdb.firebaseio.com/movies.json',{
+    method: 'POST',
+    body: JSON.stringify(movie),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  const data = await response.json();
+  console.log(data);
+  //to get updated movies list once i submit my own movie
+  fetchMoviesHandler();
+}
  let content = <p>Found No Movies</p>
 
  if(movies.length>0){
@@ -58,6 +87,9 @@ function App() {
 
   return (
     <React.Fragment>
+       <section>
+        <AddMovie onAddMovie={addMovieHandler} />
+      </section>
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
