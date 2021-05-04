@@ -68,8 +68,14 @@ async function addMovieHandler(movie) {
 
   const data = await response.json();
   console.log(data);
+  const transformedData = {
+    id: data.name,
+    title: movie.title,
+    openingText: movie.openingText,
+    releaseDate: movie.releaseDate
+  }
   //to get updated movies list once i submit my own movie
-  fetchMoviesHandler();
+  setFetchMovies((movies) => movies.concat(transformedData));
 }
  let content = <p>Found No Movies</p>
 
